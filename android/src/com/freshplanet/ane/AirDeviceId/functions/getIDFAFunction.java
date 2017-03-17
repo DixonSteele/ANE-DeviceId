@@ -28,12 +28,12 @@ public class getIDFAFunction implements FREFunction {
 			
 			@Override
 			public void run() {
-				
+				String idfa = "00000000-0000-0000-0000-000000000000";
 				try {
-					finished(activity, AdvertisingIdClient.getAdvertisingIdInfo(context));
+					AdvertisingIdClient.Info adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
+					idfa = adInfo.getId();
 				} 
 				catch (IllegalStateException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
 				catch (GooglePlayServicesRepairableException e) {
@@ -48,27 +48,13 @@ public class getIDFAFunction implements FREFunction {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
+				AirDeviceIdExtension.context.dispatchStatusEventAsync(IDFA_VALUE, idfa);
 			}
 		});
 		
 		idfaThread.start();
 		
 		return null;
-	}
-	
-	private void finished(final Activity activity, final AdvertisingIdClient.Info adInfo){
-		
-	    if (adInfo != null) {
-
-	    	activity.runOnUiThread(new Runnable() {
-	        	
-	            @Override
-	            public void run() {
-
-	            	String idfa = adInfo.getId();
-	            	AirDeviceIdExtension.context.dispatchStatusEventAsync(IDFA_VALUE, idfa);
-	            }
-	        });
-	    }
 	}
 }
